@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">InventorySystem</string>
+    <string name="log_in">Log In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="inventory_system">Inventory System</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 </resources>
