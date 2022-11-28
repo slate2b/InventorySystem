@@ -5,4 +5,17 @@
     <string name="inventory_system">Inventory System</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="add_product">Add Product</string>
+    <string name="product_for_testing">Product for Testing</string>
+    <string name="_111111">111111</string>
+    <string name="_99">99</string>
+    <string name="delete">Delete</string>
+    <string name="product_name">Product Name</string>
+    <string name="product_number">Product Number</string>
+    <string name="in_stock">In Stock</string>
+    <string name="sku">SKU</string>
+    <string name="sms_permission">SMS Permission</string>
+    <string name="update_quantity">Update Quantity</string>
+    <string name="sign_up_for_sms_notifications">Sign up for SMS Notifications >>></string>
+    <string name="app_settings">App Settings</string>
 </resources>
