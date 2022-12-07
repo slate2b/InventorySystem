@@ -1,24 +1,22 @@
 package com.cs360.inventorysystem;
 
+/**
+ * The product records in the inventory database
+ */
 public class Product {
 
+    private long mProductId;
     private String mProductName;
     private String mProductNumber;
     private String mProductQuantity;
+    private long mUpdateTime;
 
-    private static Product mProduct;
-
-    public static Product getInstance(String pName, String pNbr, String pQty) {
-        if (mProduct == null) {
-            mProduct = new Product(pName, pNbr, pQty);
-        }
-        return mProduct;
+    public long getProductId() {
+        return this.mProductId;
     }
 
-    private Product(String pName, String pNbr, String pQty) {
-        mProductName = pName;
-        mProductNumber = pNbr;
-        mProductQuantity = pQty;
+    public void setProductId(long id) {
+        mProductId = id;
     }
 
     public String getProductName() {
@@ -26,7 +24,7 @@ public class Product {
     }
 
     public void setProductName(String pName) {
-        mProductName = pName;
+        this.mProductName = pName;
     }
 
     public String getProductNumber() {
@@ -34,7 +32,7 @@ public class Product {
     }
 
     public void setProductNumber(String pNbr) {
-        mProductNumber = pNbr;
+        this.mProductNumber = pNbr;
     }
 
     public String getProductQuantity() {
@@ -42,6 +40,14 @@ public class Product {
     }
 
     public void setProductQuantity(String pQty) {
-        mProductQuantity = pQty;
+        this.mProductQuantity = pQty;
+    }
+
+    public long getUpdateTime() {
+        return this.mUpdateTime;
+    }
+
+    public void setUpdateTime(long time) {
+        mUpdateTime = time;
     }
 }

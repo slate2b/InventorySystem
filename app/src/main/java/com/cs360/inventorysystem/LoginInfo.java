@@ -1,9 +1,13 @@
 package com.cs360.inventorysystem;
 
+/**
+ * The login info for users of the app
+ */
 public class LoginInfo {
 
     private String mUsername;
     private String mPassword;
+    private long mUpdateTime;
 
     private static LoginInfo mLoginInfo;
 
@@ -17,6 +21,7 @@ public class LoginInfo {
     private LoginInfo(String usrnm, String pw) {
         mUsername = usrnm;
         mPassword = pw;
+        mUpdateTime = System.currentTimeMillis();
     }
 
     public String getUsername() {
@@ -33,5 +38,13 @@ public class LoginInfo {
 
     public void setPassword(String pw) {
         mPassword = pw;
+    }
+
+    public long getUpdateTime() {
+        return mUpdateTime;
+    }
+
+    public void setUpdateTime(long time) {
+        mUpdateTime = time;
     }
 }

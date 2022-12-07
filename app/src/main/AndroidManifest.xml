@@ -31,7 +31,7 @@
         </activity>
 
         <activity
-            android:name=".GridActivity"
+            android:name=".InventoryActivity"
             android:exported="false">
 
             <meta-data

@@ -1,32 +1,21 @@
 package com.cs360.inventorysystem;
 
+/**
+ * The user preferences for the app
+ */
 public class Preferences {
 
-    private String mUsername;
+    private long mPreferencesId;
     private boolean mSmsActive;
     private boolean mInAppActive;
+    private String mUsername;
 
-    private static Preferences mPreferences;
-
-    public static Preferences getInstance(String usrnm, boolean sms, boolean inApp) {
-        if (mPreferences == null) {
-            mPreferences = new Preferences(usrnm, sms, inApp);
-        }
-        return mPreferences;
+    public long getPreferencesId() {
+        return mPreferencesId;
     }
 
-    private Preferences(String usrnm, boolean sms, boolean inApp) {
-        mUsername = usrnm;
-        mSmsActive = sms;
-        mInAppActive = inApp;
-    }
-
-    public String getUserName() {
-        return mUsername;
-    }
-
-    public void setUserName(String usrnm) {
-        mUsername = usrnm;
+    public void setPreferencesId(long id) {
+        mPreferencesId = id;
     }
 
     public boolean getSmsActive() {
@@ -43,5 +32,13 @@ public class Preferences {
 
     public void setInAppActive(boolean inApp) {
         mInAppActive = inApp;
+    }
+
+    public String getUserName() {
+        return mUsername;
+    }
+
+    public void setUserName(String usrnm) {
+        mUsername = usrnm;
     }
 }

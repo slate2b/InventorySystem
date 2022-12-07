@@ -21,4 +21,9 @@
     <string name="user_preferences">User Preferences</string>
     <string name="text_notifications_sms">Text Notifications (SMS)</string>
     <string name="in_app_notifications">In-App Notifications</string>
+    <string name="invalid_login">Those login credentials do not match our records. Please try again.</string>
+    <string name="enter_username">Please enter your username.</string>
+    <string name="valid_username">Please enter your username.</string>
+    <string name="valid_password">Please enter your password.</string>
+
 </resources>
