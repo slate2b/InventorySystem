@@ -42,11 +42,20 @@ public class LoginActivity extends AppCompatActivity {
             mTextAlert.setText(R.string.valid_password);
         }
         else if (InventoryDatabase.getInstance(getApplicationContext()).existingUsername(username, password)) {
-            Intent intent = new Intent(this, InventoryActivity.class);
+            if (InventoryDatabase.getInstance(getApplicationContext()).authenticateLogin(username, password)) {
+                Intent intent = new Intent(this, InventoryActivity.class);
+                startActivity(intent);
+            }
+            else {
+                mTextAlert.setText(R.string.invalid_login);
+            }
+        }
+        else if (!InventoryDatabase.getInstance(getApplicationContext()).existingUsername(username, password)) {
+            Intent intent = new Intent(this, NewUserActivity.class);
             startActivity(intent);
         }
         else {
-            mTextAlert.setText(R.string.invalid_login);
+            mTextAlert.setText("Something went wrong. Please try again.");
         }
     }
 }

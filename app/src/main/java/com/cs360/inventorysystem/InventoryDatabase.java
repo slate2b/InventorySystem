@@ -95,60 +95,6 @@ public class InventoryDatabase extends SQLiteOpenHelper {
 
 
     /**
-     * Checks to see whether username is already in the database
-     * @param usrnm - the username
-     * @param pw - the password
-     * @return - Returns true if the username was found, returns false if it was not found.
-     */
-    public boolean existingUsername(String usrnm, String pw) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String getUsernameSQL = "select * from " + LoginInfoTable.TABLE +
-                " where " + LoginInfoTable.COL_USERNAME + " = ?";
-
-        // Assigning results of query to a cursor
-        Cursor cursor = db.rawQuery(getUsernameSQL, new String[] { usrnm });
-
-        // moveToFirst returns true if able to move to first row, false if cursor is empty
-        if (!cursor.moveToFirst()) {
-            createLogin(usrnm, pw);
-            return false;
-        }
-        else {
-            authenticateLogin(usrnm, pw);
-            return true;
-        }
-    }
-
-    /**
-     * Creates a new login info record in the database for a new user
-     * @param usrnm - the username
-     * @param pw - the password
-     * @return - Returns true if login info created successfully, otherwise false
-     */
-    public boolean createLogin(String usrnm, String pw) {
-        boolean isCreated = false;
-
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        // Securing against SQL injection by passing parameters separate from the query string
-        String getUsernameSQL = "select * from " + LoginInfoTable.TABLE +
-                " WHERE " + LoginInfoTable.COL_USERNAME + " = ?";
-
-        // Passing query parameters and assigning result to a cursor
-        Cursor cursor = db.rawQuery(getUsernameSQL, new String[] { usrnm });
-
-        if (!cursor.moveToFirst()) {
-            LoginInfo loginInfo = LoginInfo.getInstance(usrnm, pw);
-            ContentValues values = new ContentValues();
-            values.put(LoginInfoTable.COL_USERNAME, loginInfo.getUsername());
-            values.put(LoginInfoTable.COL_PASSWORD, loginInfo.getPassword());
-            values.put(LoginInfoTable.COL_UPDATE_TIME, loginInfo.getUpdateTime());
-            isCreated = true;
-        }
-        return isCreated;
-    }
-
-    /**
      * Authenticates login credentials
      * @param usrnm - the username
      * @param pw - the password
@@ -167,12 +113,69 @@ public class InventoryDatabase extends SQLiteOpenHelper {
         // Passing query parameters and assigning result to a cursor
         Cursor loginCursor = db.rawQuery(getLoginSQL, new String[] { usrnm, pw });
 
+        // moveToFirst returns true if able to move to first row, false if cursor is empty
         if (loginCursor.moveToFirst()) {
             isAuthenticated = true;
         }
 
         return isAuthenticated;
     }
+
+    /**
+     * Creates a new login info record in the database for a new user
+     * @param usrnm - the username
+     * @param pw - the password
+     * @return - Returns true if login info created successfully, otherwise false
+     */
+    public boolean createLogin(String usrnm, String pw) {
+        boolean isCreated = false;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Call the existingUsername method to make sure username doesn't already exist
+        if (!existingUsername(usrnm, pw)) {
+            try {
+                LoginInfo loginInfo = LoginInfo.getInstance(usrnm, pw);
+                ContentValues values = new ContentValues();
+                values.put(LoginInfoTable.COL_USERNAME, loginInfo.getUsername());
+                values.put(LoginInfoTable.COL_PASSWORD, loginInfo.getPassword());
+                values.put(LoginInfoTable.COL_UPDATE_TIME, loginInfo.getUpdateTime());
+                long id = db.insert(LoginInfoTable.TABLE, null, values);
+                if (id != -1) {
+                    isCreated = true;
+                }
+            } catch (Exception exception) {
+                System.out.println("Failed to register new user.");
+            }
+        }
+
+        return isCreated;
+    }
+
+    /**
+     * Checks to see whether username is already in the database
+     * @param usrnm - the username
+     * @param pw - the password
+     * @return - Returns true if the username was found, returns false if it was not found.
+     */
+    public boolean existingUsername(String usrnm, String pw) {
+        boolean isExisting = false;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String getUsernameSQL = "select * from " + LoginInfoTable.TABLE +
+                " where " + LoginInfoTable.COL_USERNAME + " = ?";
+
+        // Assigning results of query to a cursor
+        Cursor cursor = db.rawQuery(getUsernameSQL, new String[] { usrnm });
+
+        // If cursor is empty, create new user account
+        if (cursor.moveToFirst()) {
+            isExisting = true;
+        }
+        return isExisting;
+    }
+
+
 
 
 

@@ -25,5 +25,12 @@
     <string name="enter_username">Please enter your username.</string>
     <string name="valid_username">Please enter your username.</string>
     <string name="valid_password">Please enter your password.</string>
+    <string name="new_user_instructions">To register a new user account for this app, please create a username and password below.</string>
+    <string name="re_enter_password">Re-enter password</string>
+    <string name="create_user">Create User</string>
+    <string name="cancel">Cancel</string>
+    <string name="new_user">New User</string>
+    <string name="passwords_do_not_match">Passwords do not match. Please try again.</string>
+    <string name="unable_register_user">Unable to register new user. Please try again.</string>
 
 </resources>
