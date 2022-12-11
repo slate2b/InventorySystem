@@ -5,6 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The Database Manager
@@ -89,10 +93,14 @@ public class InventoryDatabase extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-
-
-    //TODO ? Need to include an onOpen method to handle foreign keys in different android versions?
-
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if (!db.isReadOnly()) {
+            // Enable foreign key constraints
+            db.setForeignKeyConstraintsEnabled(true);
+        }
+    }
 
     /**
      * Authenticates login credentials
@@ -175,7 +183,35 @@ public class InventoryDatabase extends SQLiteOpenHelper {
         return isExisting;
     }
 
+    /**
+     * Retrieves products from the db and adds them to a list
+     * @return - List of products
+     */
+    public List<Product> getProducts() {
+        List<Product> products = new ArrayList<>();
 
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Setting sort to asc by product id
+        String orderBy = ProductTable.COL_ID + " asc";
+
+        String sql = "select * from " + ProductTable.TABLE + " order by " + orderBy;
+        Cursor cursor = db.rawQuery(sql, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Product product = new Product();
+                product.setProductId(cursor.getLong(0));
+                product.setProductName(cursor.getString(1));
+                product.setProductNumber(cursor.getString(2));
+                product.setProductQuantity(cursor.getLong(3));
+                product.setUpdateTime(cursor.getLong(4));
+                products.add(product);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        return products;
+    }
 
 
 

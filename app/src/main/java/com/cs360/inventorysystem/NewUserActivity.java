@@ -70,7 +70,7 @@ public class NewUserActivity extends AppCompatActivity {
      * Handles app flow when user clicks the cancel button
      */
     private void handleCancel() {
-        // Start the login activity
+        // Navigate back to the login activity
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }

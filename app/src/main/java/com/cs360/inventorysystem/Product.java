@@ -8,7 +8,7 @@ public class Product {
     private long mProductId;
     private String mProductName;
     private String mProductNumber;
-    private String mProductQuantity;
+    private long mProductQuantity;
     private long mUpdateTime;
 
     public long getProductId() {
@@ -35,11 +35,11 @@ public class Product {
         this.mProductNumber = pNbr;
     }
 
-    public String getProductQuantity() {
+    public long getProductQuantity() {
         return mProductQuantity;
     }
 
-    public void setProductQuantity(String pQty) {
+    public void setProductQuantity(long pQty) {
         this.mProductQuantity = pQty;
     }
 
