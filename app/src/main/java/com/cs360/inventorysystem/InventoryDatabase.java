@@ -256,6 +256,16 @@ public class InventoryDatabase extends SQLiteOpenHelper {
         return id != -1;
     }
 
+    /**
+     * Deletes product from the SQLite Database
+     * @param productId - The product
+     */
+    public void deleteProduct(long productId) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(ProductTable.TABLE,
+                ProductTable.COL_ID + " = " + productId, null);
+    }
+
     //TODO TONS OF OTHER CRAP
 
 

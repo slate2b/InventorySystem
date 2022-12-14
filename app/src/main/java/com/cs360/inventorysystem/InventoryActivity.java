@@ -1,14 +1,18 @@
 package com.cs360.inventorysystem;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +23,9 @@ public class InventoryActivity extends AppCompatActivity {
     private final int REQUEST_CODE_ADD_PRODUCT = 0;
     private final int REQUEST_CODE_DELETE_PRODUCT = 1;
     private final int REQUEST_CODE_UPDATE_QUANTITY = 2;
+
+    public static final String EXTRA_PRODUCT_ID = "com.cs360.inventorysystem.product_id";
+    public static final String EXTRA_ADAPTER_POS = "com.cs360.inventorysystem.adapter_pos";
 
     private InventoryDatabase mInventoryDb;
 
@@ -53,6 +60,7 @@ public class InventoryActivity extends AppCompatActivity {
         // Load the inventory data
         mInventoryAdapter = new InventoryAdapter(loadInventory());
         mRecyclerView.setAdapter(mInventoryAdapter);
+
     }
 
     private List<Product> loadInventory() {
@@ -60,21 +68,32 @@ public class InventoryActivity extends AppCompatActivity {
     }
 
     private class ProductHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener{
+            implements View.OnClickListener, View.OnLongClickListener {
 
+        private Product mProduct;
         private TextView mNameText;
         private TextView mNumberText;
         private TextView mQuantityText;
+        private ImageButton mButtonUpdateQuantity;
 
         public ProductHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.recycler_view_items, parent, false));
             itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+            //mButtonUpdateQuantity.setOnClickListener(this);
+
             mNameText = itemView.findViewById(R.id.nameTextView);
             mNumberText = itemView.findViewById(R.id.numberTextView);
             mQuantityText = itemView.findViewById(R.id.quantityTextView);
+
+            mButtonUpdateQuantity = itemView.findViewById(R.id.updateQuantityButton);
+
+            //TODO IMPLEMENT HANDLE UPDATE QUANTITY AND UPDATE QUANTITY ACTIVITY
+            //mButtonUpdateQuantity.setOnClickListener(listener -> handleUpdateQuantity());
         }
 
         public void bind(Product product, int position) {
+            mProduct = product;
             mNameText.setText(product.getProductName());
             mNumberText.setText(product.getProductNumber());
             mQuantityText.setText(String.valueOf(product.getProductQuantity()));
@@ -91,7 +110,19 @@ public class InventoryActivity extends AppCompatActivity {
             startActivity(intent);
             */
         }
+
+        @Override
+        public boolean onLongClick(View view) {
+            int adapterPos = getBindingAdapterPosition();
+            Intent intent = new Intent(InventoryActivity.this, DeleteProductActivity.class);
+            intent.putExtra(EXTRA_PRODUCT_ID, mProduct.getProductId());
+            intent.putExtra(EXTRA_ADAPTER_POS, adapterPos);
+            startActivityForResult(intent, REQUEST_CODE_DELETE_PRODUCT);
+            return true;
+        }
     }
+
+
 
     private class InventoryAdapter extends RecyclerView.Adapter<ProductHolder> {
 
@@ -144,6 +175,28 @@ public class InventoryActivity extends AppCompatActivity {
 
             Toast.makeText(this, "Product added", Toast.LENGTH_SHORT).show();
         }
+
+        else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_DELETE_PRODUCT
+        ) {
+            // Get product to delete
+            long productId = data.getLongExtra(DeleteProductActivity.EXTRA_PRODUCT_ID, -1);
+            Product productToDelete = mInventoryDb.getProduct(productId);
+
+            // Pass product id to inventory db to delete the product record
+            mInventoryDb.deleteProduct(productId);
+
+            // Remove product from the product list
+            mProductList.remove(productToDelete);
+
+            // Refresh the activity
+            Intent intent = new Intent(this, InventoryActivity.class);
+            startActivity(intent);
+
+            Toast.makeText(this, "Product deleted", Toast.LENGTH_SHORT).show();
+        }
+
+        //TODO IMPLEMENT FOR REQUEST_CODE_UPDATE_QUANTITY
+
         /*
         else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_UPDATE_QUESTION) {
             // Get updated question

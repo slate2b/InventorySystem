@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 public class AddProductActivity extends AppCompatActivity {
 
-    public static final String EXTRA_PRODUCT_ID = "com.cs360.inventorysystem.question_id";
+    public static final String EXTRA_PRODUCT_ID = "com.cs360.inventorysystem.product_id";
 
     private EditText mProductNameText;
     private EditText mProductNumberText;
@@ -69,7 +69,7 @@ public class AddProductActivity extends AppCompatActivity {
             mInventoryDb.addProduct(mProduct);
 
             // Send back the product ID
-            Intent intent = new Intent();
+            Intent intent = new Intent(this, InventoryActivity.class);
             intent.putExtra(EXTRA_PRODUCT_ID, mProduct.getProductId());
             setResult(RESULT_OK, intent);
             startActivity(intent);
