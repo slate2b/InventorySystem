@@ -32,5 +32,9 @@
     <string name="new_user">New User</string>
     <string name="passwords_do_not_match">Passwords do not match. Please try again.</string>
     <string name="unable_register_user">Unable to register new user. Please try again.</string>
+    <string name="product_quantity">Product Quantity</string>
+    <string name="add_new_product">Add New Product</string>
+    <string name="save">Save</string>
+    <string name="add_new_product_instructions">Enter the data requested below in order to add a new product.</string>
 
 </resources>

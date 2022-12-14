@@ -25,7 +25,7 @@
             app:layout_constraintStart_toStartOf="parent"
             android:text="Inventory"
             android:textColor="@color/purple_500"
-            android:textSize="34sp"
+            android:textSize="30sp"
             android:textStyle="bold" />
 
         <ImageButton
@@ -46,22 +46,24 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="90dp"
         android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="76dp"
         android:scrollbars="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addSubjectButton"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:id="@+id/addProductFAB"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
-        android:background="#6200EE"
+        android:background="#03A9F4"
+        android:backgroundTint="#03A9F4"
         android:contentDescription="@string/add_product"
         android:foreground="@drawable/add_white_24"
-        android:onClick="addProductClick"
-        app:backgroundTint="#6200EE"
+        android:onClick="handleAddProductClick"
         app:srcCompat="@drawable/add_white_24" />
+
+
 
 </FrameLayout>

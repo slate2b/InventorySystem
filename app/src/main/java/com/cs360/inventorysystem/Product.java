@@ -11,6 +11,16 @@ public class Product {
     private long mProductQuantity;
     private long mUpdateTime;
 
+    public Product() {}
+
+    public Product(String name, String number, long quantity) {
+
+        mProductName = name;
+        mProductNumber = number;
+        mProductQuantity = quantity;
+        mUpdateTime = System.currentTimeMillis();
+    }
+
     public long getProductId() {
         return this.mProductId;
     }

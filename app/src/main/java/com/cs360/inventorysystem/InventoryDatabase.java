@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -213,7 +214,47 @@ public class InventoryDatabase extends SQLiteOpenHelper {
         return products;
     }
 
+    /**
+     * Retrieves a single product record from the db
+     * @param productId - The Product Id
+     * @return Product - The Product object
+     */
+    public Product getProduct(long productId) {
+        Product product = null;
 
+        SQLiteDatabase db = this.getReadableDatabase();
+        String sql = "select * from " + ProductTable.TABLE +
+                " where " + ProductTable.COL_ID + " = ?";
+        Cursor cursor = db.rawQuery(sql, new String[] { Float.toString(productId) });
+
+        if (cursor.moveToFirst()) {
+            product = new Product();
+            product.setProductId(cursor.getInt(0));
+            product.setProductName(cursor.getString(1));
+            product.setProductNumber(cursor.getString(2));
+            product.setProductQuantity(cursor.getInt(3));
+            product.setUpdateTime(cursor.getInt(4));
+        }
+
+        return product;
+    }
+
+
+    /**
+     * Adds product to the SQLite Database
+     * @param product - The product
+     * @return boolean - Whether the product was added successfully
+     */
+    public boolean addProduct(Product product) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(ProductTable.COL_NAME, product.getProductName());
+        values.put(ProductTable.COL_NUMBER, product.getProductNumber());
+        values.put(ProductTable.COL_QUANTITY, product.getProductQuantity());
+        values.put(ProductTable.COL_UPDATE_TIME, product.getUpdateTime());
+        long id = db.insert(ProductTable.TABLE, null, values);
+        return id != -1;
+    }
 
     //TODO TONS OF OTHER CRAP
 

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -51,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
         else if (!InventoryDatabase.getInstance(getApplicationContext()).existingUsername(username, password)) {
+            Toast.makeText(this, "New user account created successfully.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, NewUserActivity.class);
             startActivity(intent);
         }
