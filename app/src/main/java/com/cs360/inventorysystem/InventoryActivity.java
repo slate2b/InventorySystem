@@ -25,7 +25,6 @@ public class InventoryActivity extends AppCompatActivity {
     private final int REQUEST_CODE_UPDATE_QUANTITY = 2;
 
     public static final String EXTRA_PRODUCT_ID = "com.cs360.inventorysystem.product_id";
-    public static final String EXTRA_ADAPTER_POS = "com.cs360.inventorysystem.adapter_pos";
 
     private InventoryDatabase mInventoryDb;
 
@@ -80,16 +79,13 @@ public class InventoryActivity extends AppCompatActivity {
             super(inflater.inflate(R.layout.recycler_view_items, parent, false));
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
-            //mButtonUpdateQuantity.setOnClickListener(this);
 
             mNameText = itemView.findViewById(R.id.nameTextView);
             mNumberText = itemView.findViewById(R.id.numberTextView);
             mQuantityText = itemView.findViewById(R.id.quantityTextView);
 
             mButtonUpdateQuantity = itemView.findViewById(R.id.updateQuantityButton);
-
-            //TODO IMPLEMENT HANDLE UPDATE QUANTITY AND UPDATE QUANTITY ACTIVITY
-            //mButtonUpdateQuantity.setOnClickListener(listener -> handleUpdateQuantity());
+            mButtonUpdateQuantity.setOnClickListener(listener -> handleUpdateQuantity());
         }
 
         public void bind(Product product, int position) {
@@ -99,31 +95,36 @@ public class InventoryActivity extends AppCompatActivity {
             mQuantityText.setText(String.valueOf(product.getProductQuantity()));
         }
 
-        //TODO Create a method to handle when a user clicks on a product card
+        // Not currently implemented
         @Override
-        public void onClick(View view) {
+        public void onClick(View view) {}
 
-            /*
-            // Start QuestionActivity, indicating what subject was clicked
-            Intent intent = new Intent(SubjectActivity.this, QuestionActivity.class);
-            intent.putExtra(QuestionActivity.EXTRA_SUBJECT, mSubject.getText());
-            startActivity(intent);
-            */
-        }
-
+        /**
+         * Starts the delete product activity when user long clicks on a product
+         * @param view - The card view which was long clicked
+         * @return - Returns true when complete
+         */
         @Override
         public boolean onLongClick(View view) {
-            int adapterPos = getBindingAdapterPosition();
             Intent intent = new Intent(InventoryActivity.this, DeleteProductActivity.class);
             intent.putExtra(EXTRA_PRODUCT_ID, mProduct.getProductId());
-            intent.putExtra(EXTRA_ADAPTER_POS, adapterPos);
             startActivityForResult(intent, REQUEST_CODE_DELETE_PRODUCT);
             return true;
         }
+
+        /**
+         * Handles updating product quantity when user presses the update quantity button
+         */
+        public void handleUpdateQuantity() {
+            Intent intent = new Intent(InventoryActivity.this, UpdateQuantityActivity.class);
+            intent.putExtra(EXTRA_PRODUCT_ID, mProduct.getProductId());
+            startActivityForResult(intent, REQUEST_CODE_UPDATE_QUANTITY);
+        }
     }
 
-
-
+    /**
+     * The RecyclerView Adapter for the products in InventoryActivity
+     */
     private class InventoryAdapter extends RecyclerView.Adapter<ProductHolder> {
 
         public InventoryAdapter(List<Product> products) {
@@ -154,28 +155,32 @@ public class InventoryActivity extends AppCompatActivity {
     public void handleAddProductClick(View view) {
         Intent intent = new Intent(this, AddProductActivity.class);
         startActivityForResult(intent, REQUEST_CODE_ADD_PRODUCT);
-
     }
 
-    //TODO Create an onActivityResult method and use request codes to handle results from various activities
-    // Use Study Helper QuestionActivity and QuestionEditActivity as a guide
+    /**
+     * Handles results from other activities
+     * @param requestCode - The request code
+     * @param resultCode - The result code
+     * @param data - The intent data from the other activity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        // When receiving results from the add product activity
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_ADD_PRODUCT
         ) {
-            // Get new product
+            // Retrieve the product object which was just created
             long productId = data.getLongExtra(AddProductActivity.EXTRA_PRODUCT_ID, -1);
             Product newProduct = mInventoryDb.getProduct(productId);
 
-            // Add new product to the product list
+            // Add the new product to the product list
             mProductList.add(newProduct);
-            mRecyclerView.getAdapter();
 
             Toast.makeText(this, "Product added", Toast.LENGTH_SHORT).show();
         }
 
+        // When receiving results from the delete product activity
         else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_DELETE_PRODUCT
         ) {
             // Get product to delete
@@ -195,23 +200,24 @@ public class InventoryActivity extends AppCompatActivity {
             Toast.makeText(this, "Product deleted", Toast.LENGTH_SHORT).show();
         }
 
-        //TODO IMPLEMENT FOR REQUEST_CODE_UPDATE_QUANTITY
+        // When receiving results from the update quantity activity
+        else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_UPDATE_QUANTITY
+        ) {
+            // Get product to update
+            long productId = data.getLongExtra(UpdateQuantityActivity.EXTRA_PRODUCT_ID, -1);
+            Product productToUpdate = mInventoryDb.getProduct(productId);
 
-        /*
-        else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_UPDATE_QUESTION) {
-            // Get updated question
-            long questionId = data.getLongExtra(QuestionEditActivity.EXTRA_QUESTION_ID, -1);
-            Question updatedQuestion = mStudyDb.getQuestion(questionId);
+            // Get updated quantity
+            long updatedQuantity = data.getLongExtra(UpdateQuantityActivity.EXTRA_PRODUCT_QUANTITY, -1);
 
-            // Replace current question in question list with updated question
-            Question currentQuestion = mQuestionList.get(mCurrentQuestionIndex);
-            currentQuestion.setText(updatedQuestion.getText());
-            currentQuestion.setAnswer(updatedQuestion.getAnswer());
-            showQuestion(mCurrentQuestionIndex);
+            // Pass product and updated quantity to inventory db to update the product record
+            mInventoryDb.updateQuantity(productToUpdate, updatedQuantity);
 
-            Toast.makeText(this, R.string.question_updated, Toast.LENGTH_SHORT).show();
+            // Refresh the activity
+            Intent intent = new Intent(this, InventoryActivity.class);
+            startActivity(intent);
+
+            Toast.makeText(this, "Product quantity updated", Toast.LENGTH_SHORT).show();
         }
-        */
-
     }
 }

@@ -15,6 +15,13 @@
         android:theme="@style/Theme.InventorySystem"
         tools:targetApi="31">
         <activity
+            android:name=".UpdateQuantityActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".DeleteProductActivity"
             android:exported="false">
             <meta-data

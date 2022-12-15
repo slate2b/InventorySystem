@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class AddProductActivity extends AppCompatActivity {
 
@@ -51,12 +52,15 @@ public class AddProductActivity extends AppCompatActivity {
 
         if (mName.isEmpty()) {
             mMessage.setText("Please enter the name of the product.");
+            Toast.makeText(this, "Please enter the name of the product", Toast.LENGTH_SHORT).show();
         }
         else if (mNumber.isEmpty()) {
             mMessage.setText("Please enter the product number.");
+            Toast.makeText(this, "Please enter the product number", Toast.LENGTH_SHORT).show();
         }
         else if (mQuantity.isEmpty()) {
-            mMessage.setText("Please enter the quantity to be added to inventory.");
+            mMessage.setText("Please enter the product quantity.");
+            Toast.makeText(this, "Please enter the product quantity", Toast.LENGTH_SHORT).show();
         }
         else {
             // Create new product

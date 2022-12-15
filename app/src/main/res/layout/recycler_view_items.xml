@@ -46,7 +46,7 @@
         android:layout_alignParentEnd="true"
         android:layout_gravity="bottom|end"
         android:contentDescription="@string/update_quantity"
-        android:onClick="updateQuantityClick"
+        android:onClick="handleUpdateQuantity"
         android:src="@drawable/up_down_24" />
 
 

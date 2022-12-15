@@ -258,7 +258,7 @@ public class InventoryDatabase extends SQLiteOpenHelper {
 
     /**
      * Deletes product from the SQLite Database
-     * @param productId - The product
+     * @param productId - The id of the product to be deleted
      */
     public void deleteProduct(long productId) {
         SQLiteDatabase db = getWritableDatabase();
@@ -266,11 +266,20 @@ public class InventoryDatabase extends SQLiteOpenHelper {
                 ProductTable.COL_ID + " = " + productId, null);
     }
 
-    //TODO TONS OF OTHER CRAP
-
-
-
-
-
-
+    /**
+     * Updates the quantity of a product in the SQLite Database
+     * @param product - The product to be updated
+     * @param quantity - The updated quantity
+     */
+    public void updateQuantity(Product product, long quantity) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(ProductTable.COL_ID, product.getProductId());
+        values.put(ProductTable.COL_NAME, product.getProductName());
+        values.put(ProductTable.COL_NUMBER, product.getProductNumber());
+        values.put(ProductTable.COL_QUANTITY, quantity);
+        values.put(ProductTable.COL_UPDATE_TIME, System.currentTimeMillis());
+        db.update(ProductTable.TABLE, values,
+                ProductTable.COL_ID + " = " + product.getProductId(), null);
+    }
 }

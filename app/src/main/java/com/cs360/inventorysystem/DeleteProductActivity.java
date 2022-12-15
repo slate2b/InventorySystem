@@ -11,7 +11,6 @@ import android.widget.TextView;
 public class DeleteProductActivity extends AppCompatActivity {
 
     public static final String EXTRA_PRODUCT_ID = "com.cs360.inventorysystem.product_id";
-    public static final String EXTRA_ADAPTER_POS = "com.cs360.inventorysystem.adapter_pos";
 
     private TextView mProductNameText;
     private TextView mProductNumberText;
@@ -20,7 +19,6 @@ public class DeleteProductActivity extends AppCompatActivity {
 
     private Product mProduct;
     private long mProductId;
-    private int mAdapterPos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +27,9 @@ public class DeleteProductActivity extends AppCompatActivity {
 
         mInventoryDb = InventoryDatabase.getInstance(getApplicationContext());
 
-        // Hosting activity provides the subject of the questions to display
+        // Get the product id from the hosting activity
         Intent intent = getIntent();
         mProductId = intent.getLongExtra(EXTRA_PRODUCT_ID, -1);
-        mAdapterPos = intent.getIntExtra(EXTRA_ADAPTER_POS, -1);
 
         mProduct = mInventoryDb.getProduct(mProductId);
 
@@ -50,8 +47,7 @@ public class DeleteProductActivity extends AppCompatActivity {
     }
 
     /**
-     * Deletes product from db, retrieves the productId, and sends the productId to the
-     * inventory activity.
+     * Sends the product id back to the inventory activity for deletion.
      */
     public void handleDelete() {
         // Send back the product ID
