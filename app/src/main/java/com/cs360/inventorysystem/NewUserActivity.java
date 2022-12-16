@@ -20,6 +20,8 @@ public class NewUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user);
 
+        setTitle("New User Account");
+
         mTextUsername = findViewById(R.id.username);
         mTextPassword = findViewById(R.id.password);
         mTextReenterPassword = findViewById(R.id.reenterPassword);

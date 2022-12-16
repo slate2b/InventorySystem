@@ -30,6 +30,8 @@ public class UpdateQuantityActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_quantity);
 
+        setTitle("Update Product Quantity");
+
         mInventoryDb = InventoryDatabase.getInstance(getApplicationContext());
 
         // Get the product id from the hosting activity
@@ -50,9 +52,9 @@ public class UpdateQuantityActivity extends AppCompatActivity {
         Button mButtonSave = findViewById(R.id.saveQuantityButton);
         mButtonSave.setOnClickListener(listener -> handleUpdate());
 
-        mProductNameText.setText("Product: " + mProduct.getProductName());
-        mProductNumberText.setText("Number: " + mProduct.getProductNumber());
-        mCurrentQuantityText.setText("Current Quantity: " + mProduct.getProductQuantity());
+        mProductNameText.setText("Product:  " + mProduct.getProductName());
+        mProductNumberText.setText("Number:  " + mProduct.getProductNumber());
+        mCurrentQuantityText.setText("Current Quantity:  " + mProduct.getProductQuantity());
     }
 
     /**

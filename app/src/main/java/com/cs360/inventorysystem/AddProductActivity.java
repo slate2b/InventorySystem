@@ -27,6 +27,8 @@ public class AddProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
 
+        setTitle("Add New Product");
+
         mProductNameText = findViewById(R.id.editTextProductName);
         mProductNumberText = findViewById(R.id.editTextProductNumber);
         mProductQuantityText = findViewById(R.id.editTextProductQuantity);

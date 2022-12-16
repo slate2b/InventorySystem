@@ -7,19 +7,6 @@
     tools:context=".AddProductActivity">
 
     <TextView
-        android:id="@+id/textViewAddProduct"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/add_new_product"
-        android:textColor="@color/purple_500"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
         android:id="@+id/textViewAddProductMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +16,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewAddProduct" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editTextProductName"

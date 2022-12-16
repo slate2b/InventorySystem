@@ -43,5 +43,7 @@
     <string name="enter_product_name">Please enter the name of the product.</string>
     <string name="enter_product_number">Please enter the product number.</string>
     <string name="current_quantity">Current Quantity: </string>
+    <string name="togglebutton">ToggleButton</string>
+    <string name="settings">settings</string>
 
 </resources>

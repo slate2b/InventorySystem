@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="35dp"
         android:layout_marginTop="90dp"
-        android:text="ToggleButton"
+        android:text="@string/togglebutton"
         app:layout_constraintStart_toEndOf="@+id/smsPreferenceTextView"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="75dp"
         android:layout_marginTop="14dp"
-        android:text="ToggleButton"
+        android:text="@string/togglebutton"
         app:layout_constraintStart_toEndOf="@+id/inAppNotificationTextView"
         app:layout_constraintTop_toBottomOf="@+id/smsToggleButton" />
 

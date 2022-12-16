@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="pref_sms"
+        android:title="SMS Notifications"
+        android:summary="Receive out of stock notifications via text message" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="pref_in_app"
+        android:title="In-App Notifications"
+        android:summary="Receive in-app notifications for out of stock products" />
+
+</PreferenceScreen>

@@ -6,7 +6,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,15 +37,33 @@ public class InventoryActivity extends AppCompatActivity {
     private int mSelectedProductPosition = RecyclerView.NO_POSITION;
     private ActionMode mActionMode = null;
 
+    private boolean mSmsNotifications;
+    private boolean mInAppNotifications;
+    private SharedPreferences mSharedPreferences;
+
     RecyclerView.LayoutManager mGridLayoutManager;
     RecyclerView mRecyclerView;
     InventoryAdapter mInventoryAdapter;
     ProductHolder mProductHolder;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mSmsNotifications = mSharedPreferences.getBoolean(SettingsFragment.PREFERENCE_SMS, false);
+        if (mSmsNotifications) {
+            //TODO IMPLEMENT SMS NOTIFICATIONS
+        }
+        mInAppNotifications = mSharedPreferences.getBoolean(SettingsFragment.PREFERENCE_IN_APP, false);
+        if (mInAppNotifications) {
+            //TODO IMPLEMENT INAPP NOTIFICATIONS
+        }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventory);
+
+        setTitle("Product Inventory");
 
         // Get instance of the db
         mInventoryDb = InventoryDatabase.getInstance(getApplicationContext());
@@ -55,6 +75,47 @@ public class InventoryActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mGridLayoutManager);
 
         // Load the inventory data
+        mInventoryAdapter = new InventoryAdapter(loadInventory());
+        mRecyclerView.setAdapter(mInventoryAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.inventory_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Using a switch case to prepare for additional menu items in future releases
+        switch (item.getItemId()) {
+            case R.id.settings:
+                Intent intent = new Intent(InventoryActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // If SMS preference changed, recreate the activity so preference is applied
+        boolean smsNotifications = mSharedPreferences.getBoolean(SettingsFragment.PREFERENCE_SMS, false);
+        if (smsNotifications != mSmsNotifications) {
+            recreate();
+        }
+
+        // If In-app preference changed, recreate the activity so preference is applied
+        boolean inAppNotifications = mSharedPreferences.getBoolean(SettingsFragment.PREFERENCE_IN_APP, false);
+        if (inAppNotifications != mInAppNotifications) {
+            recreate();
+        }
+
+        // Reload products in case preferences changed
         mInventoryAdapter = new InventoryAdapter(loadInventory());
         mRecyclerView.setAdapter(mInventoryAdapter);
     }
