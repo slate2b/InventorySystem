@@ -17,6 +17,7 @@ public class UpdateQuantityActivity extends AppCompatActivity {
 
     private TextView mProductNameText;
     private TextView mProductNumberText;
+    private TextView mCurrentQuantityText;
     private EditText mQuantityEditText;
 
     private InventoryDatabase mInventoryDb;
@@ -39,6 +40,7 @@ public class UpdateQuantityActivity extends AppCompatActivity {
 
         mProductNameText = findViewById(R.id.textViewQuantityProductName);
         mProductNumberText = findViewById(R.id.textViewQuantityProductNumber);
+        mCurrentQuantityText = findViewById(R.id.textViewQuantityCurrent);
 
         mQuantityEditText = findViewById(R.id.editTextUpdateQuantity);
 
@@ -48,8 +50,9 @@ public class UpdateQuantityActivity extends AppCompatActivity {
         Button mButtonSave = findViewById(R.id.saveQuantityButton);
         mButtonSave.setOnClickListener(listener -> handleUpdate());
 
-        mProductNameText.setText(mProduct.getProductName());
-        mProductNumberText.setText(mProduct.getProductNumber());
+        mProductNameText.setText("Product: " + mProduct.getProductName());
+        mProductNumberText.setText("Number: " + mProduct.getProductNumber());
+        mCurrentQuantityText.setText("Current Quantity: " + mProduct.getProductQuantity());
     }
 
     /**

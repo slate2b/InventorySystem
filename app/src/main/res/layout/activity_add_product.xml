@@ -70,7 +70,8 @@
         android:inputType="number"
         android:minHeight="48dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextProductNumber" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextProductNumber"
+        android:autofillHints="" />
 
     <Button
         android:id="@+id/cancelAddProductButton"

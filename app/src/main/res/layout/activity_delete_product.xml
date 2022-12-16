@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:text="Delete Product"
+        android:text="@string/delete_product"
         android:textColor="@color/purple_500"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="20dp"
-        android:text="Are you sure you want to delete the following product?"
+        android:text="@string/are_you_sure_delete"
         android:textColor="@color/purple_500"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -79,7 +79,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:minHeight="48dp"
-        android:text="Delete"
+        android:text="@string/delete"
         app:layout_constraintStart_toEndOf="@+id/cancelDeleteProductButton"
         app:layout_constraintTop_toBottomOf="@+id/textViewDeleteProductNumber" />
 

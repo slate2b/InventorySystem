@@ -1,17 +1,19 @@
 package com.cs360.inventorysystem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,8 +23,7 @@ import java.util.List;
 public class InventoryActivity extends AppCompatActivity {
 
     private final int REQUEST_CODE_ADD_PRODUCT = 0;
-    private final int REQUEST_CODE_DELETE_PRODUCT = 1;
-    private final int REQUEST_CODE_UPDATE_QUANTITY = 2;
+    private final int REQUEST_CODE_UPDATE_QUANTITY = 1;
 
     public static final String EXTRA_PRODUCT_ID = "com.cs360.inventorysystem.product_id";
 
@@ -30,22 +31,19 @@ public class InventoryActivity extends AppCompatActivity {
 
     private List<Product> mProductList;
 
-    private String mAddProductName;
-    private String mAddProductNumber;
-    private long mAddProductQuantity;
+    private Product mSelectedProduct;
+    private int mSelectedProductPosition = RecyclerView.NO_POSITION;
+    private ActionMode mActionMode = null;
 
     RecyclerView.LayoutManager mGridLayoutManager;
     RecyclerView mRecyclerView;
     InventoryAdapter mInventoryAdapter;
+    ProductHolder mProductHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventory);
-
-        mAddProductName = "";
-        mAddProductNumber = "";
-        mAddProductQuantity = -1;
 
         // Get instance of the db
         mInventoryDb = InventoryDatabase.getInstance(getApplicationContext());
@@ -59,7 +57,6 @@ public class InventoryActivity extends AppCompatActivity {
         // Load the inventory data
         mInventoryAdapter = new InventoryAdapter(loadInventory());
         mRecyclerView.setAdapter(mInventoryAdapter);
-
     }
 
     private List<Product> loadInventory() {
@@ -100,15 +97,26 @@ public class InventoryActivity extends AppCompatActivity {
         public void onClick(View view) {}
 
         /**
-         * Starts the delete product activity when user long clicks on a product
-         * @param view - The card view which was long clicked
-         * @return - Returns true when complete
+         * Triggers the contextual action bar, currently implemented to delete products from the
+         * inventory.
+         * @param view - The view which was clicked
+         * @return - true if action mode is null, false if action mode is not null.
          */
         @Override
         public boolean onLongClick(View view) {
-            Intent intent = new Intent(InventoryActivity.this, DeleteProductActivity.class);
-            intent.putExtra(EXTRA_PRODUCT_ID, mProduct.getProductId());
-            startActivityForResult(intent, REQUEST_CODE_DELETE_PRODUCT);
+            if (mActionMode != null) {
+                return false;
+            }
+
+            mSelectedProduct = mProduct;
+            mSelectedProductPosition = getAbsoluteAdapterPosition();
+
+            // Trigger the adapter's bind method for the selected item
+            mInventoryAdapter.notifyItemChanged(mSelectedProductPosition);
+
+            // Show the contextual action bar
+            mActionMode = InventoryActivity.this.startActionMode(mActionModeCallback);
+
             return true;
         }
 
@@ -131,10 +139,12 @@ public class InventoryActivity extends AppCompatActivity {
             mProductList = products;
         }
 
+        @NonNull
         @Override
         public ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
-            return new ProductHolder(layoutInflater, parent);
+            mProductHolder = new ProductHolder(layoutInflater, parent);
+            return mProductHolder;
         }
 
         @Override
@@ -146,6 +156,43 @@ public class InventoryActivity extends AppCompatActivity {
         public int getItemCount() {
             return mProductList.size();
         }
+
+        /**
+         * Adds a new product to the class member product list
+         * @param product - The product to be added
+         */
+        public void addProduct(Product product) {
+            // Add the new product at the beginning of the product list
+            mProductList.add(0, product);
+
+            // Let the adapter know a product was inserted at index zero
+            notifyItemInserted(0);
+
+            // Scroll to the top of the recycler view
+            mRecyclerView.scrollToPosition(0);
+        }
+
+        /**
+         * Removes selected product from the class member product list
+         * @param product - The product to be removed
+         */
+        public void removeProduct(Product product) {
+            // Retrieve index of the product to be deleted
+            int index = mProductList.indexOf(product);
+
+            // Check to make sure index is valid
+            if (index >= 0 && index < mProductList.size()) {
+
+                // Remove the product from the product list
+                mProductList.remove(index);
+
+                // Tell the adapter that a product was removed and pass the index
+                notifyItemRemoved(index);
+            }
+
+            // Scroll to the top of the recycler view
+            mRecyclerView.scrollToPosition(0);
+        }
     }
 
     /**
@@ -156,6 +203,58 @@ public class InventoryActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AddProductActivity.class);
         startActivityForResult(intent, REQUEST_CODE_ADD_PRODUCT);
     }
+
+    /**
+     * Callback to handle actions selected in the contextual action bar. Called by the RecyclerView's
+     * product holder onLongClick method.
+     */
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            // Inflate the contextual action bar
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.context_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            boolean isDeleted = false;
+
+            try {
+                // Delete the product from the database
+                mInventoryDb.deleteProduct(mSelectedProduct.getProductId());
+
+                // Remove the product from the RecyclerView adapter
+                mInventoryAdapter.removeProduct(mSelectedProduct);
+
+                // Close the contextual action bar
+                mode.finish();
+
+                isDeleted = true;
+            }
+            catch(Exception e) {
+                System.out.println("Failed to delete product " + mSelectedProduct.getProductName());
+            }
+            return isDeleted;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            // Set action mode back to null
+            mActionMode = null;
+
+            // Clear selected item when the contextual action bar closes
+            mInventoryAdapter.notifyItemChanged(mSelectedProductPosition);
+            mSelectedProductPosition = RecyclerView.NO_POSITION;
+        }
+    };
 
     /**
      * Handles results from other activities
@@ -170,34 +269,24 @@ public class InventoryActivity extends AppCompatActivity {
         // When receiving results from the add product activity
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_ADD_PRODUCT
         ) {
-            // Retrieve the product object which was just created
-            long productId = data.getLongExtra(AddProductActivity.EXTRA_PRODUCT_ID, -1);
-            Product newProduct = mInventoryDb.getProduct(productId);
+            // Retrieve the data for the new product
+            String productName = data.getStringExtra(AddProductActivity.EXTRA_PRODUCT_NAME);
+            String productNumber = data.getStringExtra(AddProductActivity.EXTRA_PRODUCT_NUMBER);
+            long productQuantity = data.getLongExtra(AddProductActivity.EXTRA_PRODUCT_QUANTITY, -1);
+
+            // Create new product
+            Product newProduct = new Product(
+                    productName,
+                    productNumber,
+                    productQuantity);
+
+            // Pass new product to inventory db to create new product record
+            mInventoryDb.addProduct(newProduct);
 
             // Add the new product to the product list
-            mProductList.add(newProduct);
+            mInventoryAdapter.addProduct(newProduct);
 
             Toast.makeText(this, "Product added", Toast.LENGTH_SHORT).show();
-        }
-
-        // When receiving results from the delete product activity
-        else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_DELETE_PRODUCT
-        ) {
-            // Get product to delete
-            long productId = data.getLongExtra(DeleteProductActivity.EXTRA_PRODUCT_ID, -1);
-            Product productToDelete = mInventoryDb.getProduct(productId);
-
-            // Pass product id to inventory db to delete the product record
-            mInventoryDb.deleteProduct(productId);
-
-            // Remove product from the product list
-            mProductList.remove(productToDelete);
-
-            // Refresh the activity
-            Intent intent = new Intent(this, InventoryActivity.class);
-            startActivity(intent);
-
-            Toast.makeText(this, "Product deleted", Toast.LENGTH_SHORT).show();
         }
 
         // When receiving results from the update quantity activity
@@ -213,7 +302,7 @@ public class InventoryActivity extends AppCompatActivity {
             // Pass product and updated quantity to inventory db to update the product record
             mInventoryDb.updateQuantity(productToUpdate, updatedQuantity);
 
-            // Refresh the activity
+            // Reload the activity to pull updated data from the db and update the recycler view
             Intent intent = new Intent(this, InventoryActivity.class);
             startActivity(intent);
 

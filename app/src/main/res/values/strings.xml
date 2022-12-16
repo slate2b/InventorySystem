@@ -36,5 +36,12 @@
     <string name="add_new_product">Add New Product</string>
     <string name="save">Save</string>
     <string name="add_new_product_instructions">Enter the data requested below in order to add a new product.</string>
+    <string name="inventory">Inventory</string>
+    <string name="delete_product">Delete Product</string>
+    <string name="are_you_sure_delete">Are you sure you want to delete the following product?</string>
+    <string name="enter_quantity">Please enter the product quantity.</string>
+    <string name="enter_product_name">Please enter the name of the product.</string>
+    <string name="enter_product_number">Please enter the product number.</string>
+    <string name="current_quantity">Current Quantity: </string>
 
 </resources>

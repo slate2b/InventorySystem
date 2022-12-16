@@ -12,14 +12,15 @@ import android.widget.Toast;
 
 public class AddProductActivity extends AppCompatActivity {
 
-    public static final String EXTRA_PRODUCT_ID = "com.cs360.inventorysystem.product_id";
+    public static final String EXTRA_PRODUCT_NAME = "com.cs360.inventorysystem.product_name";
+    public static final String EXTRA_PRODUCT_NUMBER = "com.cs360.inventorysystem.product_number";
+    public static final String EXTRA_PRODUCT_QUANTITY = "com.cs360.inventorysystem.product_quantity";
+
 
     private EditText mProductNameText;
     private EditText mProductNumberText;
     private EditText mProductQuantityText;
     private TextView mMessage;
-
-    private InventoryDatabase mInventoryDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +32,6 @@ public class AddProductActivity extends AppCompatActivity {
         mProductQuantityText = findViewById(R.id.editTextProductQuantity);
         mMessage = findViewById(R.id.textViewAddProductMessage);
 
-        mInventoryDb = InventoryDatabase.getInstance(getApplicationContext());
-
         Button mButtonCancel = findViewById(R.id.cancelAddProductButton);
         mButtonCancel.setOnClickListener(listener -> handleCancel());
 
@@ -41,42 +40,37 @@ public class AddProductActivity extends AppCompatActivity {
     }
 
     /**
-     * Adds new product to db, retrieves the productId, and sends the productId to the
-     * inventory activity.
+     * Collects user input and sends the data back to the inventory activity so product can be
+     * created.
      */
     public void handleSave() {
 
-        String mName = mProductNameText.getText().toString();
-        String mNumber = mProductNumberText.getText().toString();
-        String mQuantity = mProductQuantityText.getText().toString();
+        String name = mProductNameText.getText().toString();
+        String number = mProductNumberText.getText().toString();
+        String quantity = mProductQuantityText.getText().toString();
+        Long quantityLong = Long.parseLong(quantity);
 
-        if (mName.isEmpty()) {
-            mMessage.setText("Please enter the name of the product.");
+        if (name.isEmpty()) {
+            mMessage.setText(R.string.enter_product_name);
             Toast.makeText(this, "Please enter the name of the product", Toast.LENGTH_SHORT).show();
         }
-        else if (mNumber.isEmpty()) {
-            mMessage.setText("Please enter the product number.");
+        else if (number.isEmpty()) {
+            mMessage.setText(R.string.enter_product_number);
             Toast.makeText(this, "Please enter the product number", Toast.LENGTH_SHORT).show();
         }
-        else if (mQuantity.isEmpty()) {
-            mMessage.setText("Please enter the product quantity.");
+        else if (quantity.isEmpty()) {
+            mMessage.setText(R.string.enter_quantity);
             Toast.makeText(this, "Please enter the product quantity", Toast.LENGTH_SHORT).show();
         }
         else {
-            // Create new product
-            Product mProduct = new Product(
-                    mName,
-                    mNumber,
-                    Long.parseLong(mQuantity));
-
-            // Pass user input to inventory db to create new product record
-            mInventoryDb.addProduct(mProduct);
 
             // Send back the product ID
             Intent intent = new Intent(this, InventoryActivity.class);
-            intent.putExtra(EXTRA_PRODUCT_ID, mProduct.getProductId());
+            intent.putExtra(EXTRA_PRODUCT_NAME, name);
+            intent.putExtra(EXTRA_PRODUCT_NUMBER, number);
+            intent.putExtra(EXTRA_PRODUCT_QUANTITY, quantityLong);
             setResult(RESULT_OK, intent);
-            startActivity(intent);
+            //startActivity(intent);
             finish();
         }
     }
