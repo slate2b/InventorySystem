@@ -21,8 +21,6 @@ public class InventoryDatabase extends SQLiteOpenHelper {
 
     private static InventoryDatabase mInventoryDb;
 
-    //TODO Implement a sorter enum?
-
     public static InventoryDatabase getInstance(Context context) {
         if (mInventoryDb == null) {
             mInventoryDb = new InventoryDatabase(context);
@@ -38,15 +36,8 @@ public class InventoryDatabase extends SQLiteOpenHelper {
         private static final String TABLE = "login";
         private static final String COL_USERNAME = "username";
         private static final String COL_PASSWORD = "password";
+        private static final String COL_PHONE = "phone";
         private static final String COL_UPDATE_TIME = "updated";
-    }
-
-    private static final class PreferencesTable {
-        private static final String TABLE = "preferences";
-        private static final String COL_ID = "id";
-        private static final String COL_USERNAME = "username";
-        private static final String COL_SMS = "sms";
-        private static final String COL_IN_APP = "in_app";
     }
 
     private static final class ProductTable {
@@ -61,22 +52,11 @@ public class InventoryDatabase extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        //TODO Create tables for LoginInfo, Product, and Preferences
-
         // Create login info table
         db.execSQL("create table " + LoginInfoTable.TABLE + " (" +
                 LoginInfoTable.COL_USERNAME + " primary key, " +
                 LoginInfoTable.COL_PASSWORD + ", " +
                 LoginInfoTable.COL_UPDATE_TIME + " int)");
-
-        // Create preferences table
-        db.execSQL("create table " + PreferencesTable.TABLE + " (" +
-                PreferencesTable.COL_ID + " integer primary key autoincrement, " +
-                PreferencesTable.COL_SMS + " integer, " +
-                PreferencesTable.COL_IN_APP + " integer, " +
-                PreferencesTable.COL_USERNAME + ", " +
-                "foreign key(" + PreferencesTable.COL_USERNAME + ") references " +
-                LoginInfoTable.TABLE + "(" + LoginInfoTable.COL_USERNAME + ") on delete cascade)");
 
         db.execSQL("create table " + ProductTable.TABLE + " (" +
                 ProductTable.COL_ID + " integer primary key autoincrement, " +
@@ -87,9 +67,8 @@ public class InventoryDatabase extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade (SQLiteDatabase db,int oldVersion, int newVersion){
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("drop table if exists " + LoginInfoTable.TABLE);
-        db.execSQL("drop table if exists " + PreferencesTable.TABLE);
         db.execSQL("drop table if exists " + ProductTable.TABLE);
         onCreate(db);
     }
@@ -105,8 +84,9 @@ public class InventoryDatabase extends SQLiteOpenHelper {
 
     /**
      * Authenticates login credentials
+     *
      * @param usrnm - the username
-     * @param pw - the password
+     * @param pw    - the password
      * @return - Returns true if the credentials are valid, returns false if they are not valid.
      */
     public boolean authenticateLogin(String usrnm, String pw) {
@@ -120,7 +100,7 @@ public class InventoryDatabase extends SQLiteOpenHelper {
                 " AND " + LoginInfoTable.COL_PASSWORD + " = ?";
 
         // Passing query parameters and assigning result to a cursor
-        Cursor loginCursor = db.rawQuery(getLoginSQL, new String[] { usrnm, pw });
+        Cursor loginCursor = db.rawQuery(getLoginSQL, new String[]{usrnm, pw});
 
         // moveToFirst returns true if able to move to first row, false if cursor is empty
         if (loginCursor.moveToFirst()) {
@@ -132,8 +112,9 @@ public class InventoryDatabase extends SQLiteOpenHelper {
 
     /**
      * Creates a new login info record in the database for a new user
+     *
      * @param usrnm - the username
-     * @param pw - the password
+     * @param pw    - the password
      * @return - Returns true if login info created successfully, otherwise false
      */
     public boolean createLogin(String usrnm, String pw) {
@@ -163,8 +144,9 @@ public class InventoryDatabase extends SQLiteOpenHelper {
 
     /**
      * Checks to see whether username is already in the database
+     *
      * @param usrnm - the username
-     * @param pw - the password
+     * @param pw    - the password
      * @return - Returns true if the username was found, returns false if it was not found.
      */
     public boolean existingUsername(String usrnm, String pw) {
@@ -175,7 +157,7 @@ public class InventoryDatabase extends SQLiteOpenHelper {
                 " where " + LoginInfoTable.COL_USERNAME + " = ?";
 
         // Assigning results of query to a cursor
-        Cursor cursor = db.rawQuery(getUsernameSQL, new String[] { usrnm });
+        Cursor cursor = db.rawQuery(getUsernameSQL, new String[]{usrnm});
 
         // If cursor is empty, create new user account
         if (cursor.moveToFirst()) {
@@ -186,6 +168,7 @@ public class InventoryDatabase extends SQLiteOpenHelper {
 
     /**
      * Retrieves products from the db and adds them to a list
+     *
      * @return - List of products
      */
     public List<Product> getProducts() {
@@ -216,6 +199,7 @@ public class InventoryDatabase extends SQLiteOpenHelper {
 
     /**
      * Retrieves a single product record from the db
+     *
      * @param productId - The Product Id
      * @return Product - The Product object
      */
@@ -225,7 +209,7 @@ public class InventoryDatabase extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String sql = "select * from " + ProductTable.TABLE +
                 " where " + ProductTable.COL_ID + " = ?";
-        Cursor cursor = db.rawQuery(sql, new String[] { Float.toString(productId) });
+        Cursor cursor = db.rawQuery(sql, new String[]{Float.toString(productId)});
 
         if (cursor.moveToFirst()) {
             product = new Product();
@@ -242,6 +226,7 @@ public class InventoryDatabase extends SQLiteOpenHelper {
 
     /**
      * Adds product to the SQLite Database
+     *
      * @param product - The product
      * @return boolean - Whether the product was added successfully
      */
@@ -258,6 +243,7 @@ public class InventoryDatabase extends SQLiteOpenHelper {
 
     /**
      * Deletes product from the SQLite Database
+     *
      * @param productId - The id of the product to be deleted
      */
     public void deleteProduct(long productId) {
@@ -268,7 +254,8 @@ public class InventoryDatabase extends SQLiteOpenHelper {
 
     /**
      * Updates the quantity of a product in the SQLite Database
-     * @param product - The product to be updated
+     *
+     * @param product  - The product to be updated
      * @param quantity - The updated quantity
      */
     public void updateQuantity(Product product, long quantity) {

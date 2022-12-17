@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.telephony.SmsManager;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,46 +38,39 @@ public class InventoryActivity extends AppCompatActivity {
     private int mSelectedProductPosition = RecyclerView.NO_POSITION;
     private ActionMode mActionMode = null;
 
-    private boolean mSmsNotifications;
-    private boolean mInAppNotifications;
     private SharedPreferences mSharedPreferences;
 
-    RecyclerView.LayoutManager mGridLayoutManager;
-    RecyclerView mRecyclerView;
-    InventoryAdapter mInventoryAdapter;
-    ProductHolder mProductHolder;
-
-
+    RecyclerView.LayoutManager gridLayoutManager;
+    RecyclerView recyclerView;
+    InventoryAdapter inventoryAdapter;
+    ProductHolder productHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mSmsNotifications = mSharedPreferences.getBoolean(SettingsFragment.PREFERENCE_SMS, false);
-        if (mSmsNotifications) {
-            //TODO IMPLEMENT SMS NOTIFICATIONS
-        }
-        mInAppNotifications = mSharedPreferences.getBoolean(SettingsFragment.PREFERENCE_IN_APP, false);
-        if (mInAppNotifications) {
-            //TODO IMPLEMENT INAPP NOTIFICATIONS
-        }
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventory);
 
         setTitle("Product Inventory");
 
+        // Load shared preferences
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         // Get instance of the db
         mInventoryDb = InventoryDatabase.getInstance(getApplicationContext());
 
-        mRecyclerView = findViewById(R.id.inventoryRecyclerView);
+        // Find the inventory activity recycler view
+        recyclerView = findViewById(R.id.inventoryRecyclerView);
 
         // Create a grid with a single column
-        mGridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
-        mRecyclerView.setLayoutManager(mGridLayoutManager);
+        gridLayoutManager = new GridLayoutManager(getApplicationContext(), 1);
+        recyclerView.setLayoutManager(gridLayoutManager);
 
         // Load the inventory data
-        mInventoryAdapter = new InventoryAdapter(loadInventory());
-        mRecyclerView.setAdapter(mInventoryAdapter);
+        inventoryAdapter = new InventoryAdapter(loadInventory());
+        recyclerView.setAdapter(inventoryAdapter);
+
+        // Create an SMS manager
+        SmsManager mSmsManager = SmsManager.getDefault();
     }
 
     @Override
@@ -99,25 +93,13 @@ public class InventoryActivity extends AppCompatActivity {
         }
     }
 
+    // Not currently implemented
     @Override
     protected void onResume() {
         super.onResume();
 
-        // If SMS preference changed, recreate the activity so preference is applied
-        boolean smsNotifications = mSharedPreferences.getBoolean(SettingsFragment.PREFERENCE_SMS, false);
-        if (smsNotifications != mSmsNotifications) {
-            recreate();
-        }
-
-        // If In-app preference changed, recreate the activity so preference is applied
-        boolean inAppNotifications = mSharedPreferences.getBoolean(SettingsFragment.PREFERENCE_IN_APP, false);
-        if (inAppNotifications != mInAppNotifications) {
-            recreate();
-        }
-
-        // Reload products in case preferences changed
-        mInventoryAdapter = new InventoryAdapter(loadInventory());
-        mRecyclerView.setAdapter(mInventoryAdapter);
+        // Load preferences in case they changed
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     private List<Product> loadInventory() {
@@ -158,8 +140,8 @@ public class InventoryActivity extends AppCompatActivity {
         public void onClick(View view) {}
 
         /**
-         * Triggers the contextual action bar, currently implemented to delete products from the
-         * inventory.
+         * Triggers the contextual action bar, currently implemented to provide the user with the
+         * option to delete product the selected product from the inventory.
          * @param view - The view which was clicked
          * @return - true if action mode is null, false if action mode is not null.
          */
@@ -173,7 +155,7 @@ public class InventoryActivity extends AppCompatActivity {
             mSelectedProductPosition = getAbsoluteAdapterPosition();
 
             // Trigger the adapter's bind method for the selected item
-            mInventoryAdapter.notifyItemChanged(mSelectedProductPosition);
+            inventoryAdapter.notifyItemChanged(mSelectedProductPosition);
 
             // Show the contextual action bar
             mActionMode = InventoryActivity.this.startActionMode(mActionModeCallback);
@@ -204,8 +186,8 @@ public class InventoryActivity extends AppCompatActivity {
         @Override
         public ProductHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LayoutInflater layoutInflater = LayoutInflater.from(getApplicationContext());
-            mProductHolder = new ProductHolder(layoutInflater, parent);
-            return mProductHolder;
+            productHolder = new ProductHolder(layoutInflater, parent);
+            return productHolder;
         }
 
         @Override
@@ -230,7 +212,7 @@ public class InventoryActivity extends AppCompatActivity {
             notifyItemInserted(0);
 
             // Scroll to the top of the recycler view
-            mRecyclerView.scrollToPosition(0);
+            recyclerView.scrollToPosition(0);
         }
 
         /**
@@ -252,7 +234,7 @@ public class InventoryActivity extends AppCompatActivity {
             }
 
             // Scroll to the top of the recycler view
-            mRecyclerView.scrollToPosition(0);
+            recyclerView.scrollToPosition(0);
         }
     }
 
@@ -268,6 +250,7 @@ public class InventoryActivity extends AppCompatActivity {
     /**
      * Callback to handle actions selected in the contextual action bar. Called by the RecyclerView's
      * product holder onLongClick method.
+     * Current implementation includes option to delete a product on a long-click.
      */
     private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
 
@@ -293,7 +276,7 @@ public class InventoryActivity extends AppCompatActivity {
                 mInventoryDb.deleteProduct(mSelectedProduct.getProductId());
 
                 // Remove the product from the RecyclerView adapter
-                mInventoryAdapter.removeProduct(mSelectedProduct);
+                inventoryAdapter.removeProduct(mSelectedProduct);
 
                 // Close the contextual action bar
                 mode.finish();
@@ -312,7 +295,7 @@ public class InventoryActivity extends AppCompatActivity {
             mActionMode = null;
 
             // Clear selected item when the contextual action bar closes
-            mInventoryAdapter.notifyItemChanged(mSelectedProductPosition);
+            inventoryAdapter.notifyItemChanged(mSelectedProductPosition);
             mSelectedProductPosition = RecyclerView.NO_POSITION;
         }
     };
@@ -345,7 +328,7 @@ public class InventoryActivity extends AppCompatActivity {
             mInventoryDb.addProduct(newProduct);
 
             // Add the new product to the product list
-            mInventoryAdapter.addProduct(newProduct);
+            inventoryAdapter.addProduct(newProduct);
 
             Toast.makeText(this, "Product added", Toast.LENGTH_SHORT).show();
         }
@@ -363,11 +346,46 @@ public class InventoryActivity extends AppCompatActivity {
             // Pass product and updated quantity to inventory db to update the product record
             mInventoryDb.updateQuantity(productToUpdate, updatedQuantity);
 
+            Toast.makeText(this, "Product quantity updated", Toast.LENGTH_SHORT).show();
+
+            /*
+            / NOTE: The current implementation of these notifications serves little practical
+            / purpose, but it lays some groundwork for more effective implementations in potential
+            / multi-user server-based releases of the app in the future.
+            */
+            // Show a Toast if quantity equals zero and if in-app notifications are turned on
+            boolean inAppNotifications = mSharedPreferences.getBoolean(SettingsFragment.PREFERENCE_IN_APP, false);
+            if (inAppNotifications && updatedQuantity == 0) {
+                Toast.makeText(this, productToUpdate.getProductName() +
+                        " is now out of stock", Toast.LENGTH_SHORT).show();
+            }
+
+            /*
+            / NOTE: The current implementation of these notifications serves little practical
+            / purpose, but it lays some groundwork for more effective implementations in potential
+            / multi-user server-based releases of the app in the future.
+            */
+            // Send an SMS message if quantity is zero, SMS preference is true, phone is not empty
+            boolean smsNotifications = mSharedPreferences.getBoolean(SettingsFragment.PREFERENCE_SMS, false);
+            String mPhone = mSharedPreferences.getString(SettingsFragment.PREFERENCE_PHONE, "");
+            if (smsNotifications && !mPhone.isEmpty() && updatedQuantity == 0) {
+                try {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    String smsMessageText =
+                            "Product Name: " + productToUpdate.getProductName() +
+                            " / Product Number: " + productToUpdate.getProductNumber() +
+                            " is now out of stock.";
+                    smsManager.sendTextMessage(mPhone, null, smsMessageText, null, null);
+                    Toast.makeText(this, "SMS sent successfully", Toast.LENGTH_SHORT).show();
+                }
+                catch(Exception e) {
+                    Toast.makeText(this, "SMS failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
             // Reload the activity to pull updated data from the db and update the recycler view
             Intent intent = new Intent(this, InventoryActivity.class);
             startActivity(intent);
-
-            Toast.makeText(this, "Product quantity updated", Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -3,65 +3,65 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".PreferencesActivity">
+    android:layout_height="match_parent">
+<!--    tools:context=".PreferencesActivity">-->
 
-    <TextView
-        android:id="@+id/userPreferencesTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/user_preferences"
-        android:textColor="@color/purple_500"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+<!--    <TextView-->
+<!--        android:id="@+id/userPreferencesTextView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        android:text="@string/user_preferences"-->
+<!--        android:textColor="@color/purple_500"-->
+<!--        android:textSize="30sp"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
-    <TextView
-        android:id="@+id/smsPreferenceTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="35dp"
-        android:text="@string/text_notifications_sms"
-        android:textColor="@color/purple_500"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userPreferencesTextView" />
+<!--    <TextView-->
+<!--        android:id="@+id/smsPreferenceTextView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="35dp"-->
+<!--        android:layout_marginTop="35dp"-->
+<!--        android:text="@string/text_notifications_sms"-->
+<!--        android:textColor="@color/purple_500"-->
+<!--        android:textSize="20sp"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/userPreferencesTextView" />-->
 
-    <TextView
-        android:id="@+id/inAppNotificationTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="35dp"
-        android:text="@string/in_app_notifications"
-        android:textColor="@color/purple_500"
-        android:textSize="20sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/smsPreferenceTextView" />
+<!--    <TextView-->
+<!--        android:id="@+id/inAppNotificationTextView"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="35dp"-->
+<!--        android:layout_marginTop="35dp"-->
+<!--        android:text="@string/in_app_notifications"-->
+<!--        android:textColor="@color/purple_500"-->
+<!--        android:textSize="20sp"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/smsPreferenceTextView" />-->
 
-    <ToggleButton
-        android:id="@+id/smsToggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="90dp"
-        android:text="@string/togglebutton"
-        app:layout_constraintStart_toEndOf="@+id/smsPreferenceTextView"
-        app:layout_constraintTop_toTopOf="parent" />
+<!--    <ToggleButton-->
+<!--        android:id="@+id/smsToggleButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="35dp"-->
+<!--        android:layout_marginTop="90dp"-->
+<!--        android:text="@string/togglebutton"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/smsPreferenceTextView"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
-    <ToggleButton
-        android:id="@+id/inAppToggleButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="75dp"
-        android:layout_marginTop="14dp"
-        android:text="@string/togglebutton"
-        app:layout_constraintStart_toEndOf="@+id/inAppNotificationTextView"
-        app:layout_constraintTop_toBottomOf="@+id/smsToggleButton" />
+<!--    <ToggleButton-->
+<!--        android:id="@+id/inAppToggleButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="75dp"-->
+<!--        android:layout_marginTop="14dp"-->
+<!--        android:text="@string/togglebutton"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/inAppNotificationTextView"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/smsToggleButton" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

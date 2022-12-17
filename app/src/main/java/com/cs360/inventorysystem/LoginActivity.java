@@ -12,6 +12,8 @@ import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
 
+    public static final String EXTRA_USERNAME = "com.cs360.inventorysystem.username";
+
     private EditText mTextUsername;
     private EditText mTextPassword;
     private TextView mTextAlert;
@@ -45,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         else if (InventoryDatabase.getInstance(getApplicationContext()).existingUsername(username, password)) {
             if (InventoryDatabase.getInstance(getApplicationContext()).authenticateLogin(username, password)) {
                 Intent intent = new Intent(this, InventoryActivity.class);
+                intent.putExtra(EXTRA_USERNAME, username);
                 startActivity(intent);
             }
             else {
@@ -52,7 +55,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
         else if (!InventoryDatabase.getInstance(getApplicationContext()).existingUsername(username, password)) {
-            Toast.makeText(this, "New user account created successfully.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, NewUserActivity.class);
             startActivity(intent);
         }
