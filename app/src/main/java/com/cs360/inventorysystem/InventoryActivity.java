@@ -1,12 +1,18 @@
 package com.cs360.inventorysystem;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.telephony.SmsManager;
@@ -137,7 +143,8 @@ public class InventoryActivity extends AppCompatActivity {
 
         // Not currently implemented
         @Override
-        public void onClick(View view) {}
+        public void onClick(View view) {
+        }
 
         /**
          * Triggers the contextual action bar, currently implemented to provide the user with the
@@ -210,9 +217,6 @@ public class InventoryActivity extends AppCompatActivity {
 
             // Let the adapter know a product was inserted at index zero
             notifyItemInserted(0);
-
-            // Scroll to the top of the recycler view
-            recyclerView.scrollToPosition(0);
         }
 
         /**
@@ -282,6 +286,9 @@ public class InventoryActivity extends AppCompatActivity {
                 mode.finish();
 
                 isDeleted = true;
+
+                Toast.makeText(InventoryActivity.this, mSelectedProduct.getProductName()
+                        + " has been deleted", Toast.LENGTH_SHORT).show();
             }
             catch(Exception e) {
                 System.out.println("Failed to delete product " + mSelectedProduct.getProductName());
@@ -316,7 +323,8 @@ public class InventoryActivity extends AppCompatActivity {
             // Retrieve the data for the new product
             String productName = data.getStringExtra(AddProductActivity.EXTRA_PRODUCT_NAME);
             String productNumber = data.getStringExtra(AddProductActivity.EXTRA_PRODUCT_NUMBER);
-            long productQuantity = data.getLongExtra(AddProductActivity.EXTRA_PRODUCT_QUANTITY, -1);
+            long productQuantity = data.getLongExtra(AddProductActivity.EXTRA_PRODUCT_QUANTITY,
+                    -1);
 
             // Create new product
             Product newProduct = new Product(
@@ -330,18 +338,25 @@ public class InventoryActivity extends AppCompatActivity {
             // Add the new product to the product list
             inventoryAdapter.addProduct(newProduct);
 
-            Toast.makeText(this, "Product added", Toast.LENGTH_SHORT).show();
+            // Reload the activity to pull updated data from the db and update the recycler view
+            Intent intent = new Intent(this, InventoryActivity.class);
+            startActivity(intent);
+
+            Toast.makeText(this, newProduct.getProductName() + "added to inventory",
+                    Toast.LENGTH_SHORT).show();
         }
 
         // When receiving results from the update quantity activity
         else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_UPDATE_QUANTITY
         ) {
             // Get product to update
-            long productId = data.getLongExtra(UpdateQuantityActivity.EXTRA_PRODUCT_ID, -1);
+            long productId = data.getLongExtra(UpdateQuantityActivity.EXTRA_PRODUCT_ID,
+                    -1);
             Product productToUpdate = mInventoryDb.getProduct(productId);
 
             // Get updated quantity
-            long updatedQuantity = data.getLongExtra(UpdateQuantityActivity.EXTRA_PRODUCT_QUANTITY, -1);
+            long updatedQuantity = data.getLongExtra(UpdateQuantityActivity.EXTRA_PRODUCT_QUANTITY,
+                    -1);
 
             // Pass product and updated quantity to inventory db to update the product record
             mInventoryDb.updateQuantity(productToUpdate, updatedQuantity);
@@ -369,6 +384,7 @@ public class InventoryActivity extends AppCompatActivity {
             boolean smsNotifications = mSharedPreferences.getBoolean(SettingsFragment.PREFERENCE_SMS, false);
             String mPhone = mSharedPreferences.getString(SettingsFragment.PREFERENCE_PHONE, "");
             if (smsNotifications && !mPhone.isEmpty() && updatedQuantity == 0) {
+
                 try {
                     SmsManager smsManager = SmsManager.getDefault();
                     String smsMessageText =

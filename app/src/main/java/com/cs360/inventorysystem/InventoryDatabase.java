@@ -36,7 +36,6 @@ public class InventoryDatabase extends SQLiteOpenHelper {
         private static final String TABLE = "login";
         private static final String COL_USERNAME = "username";
         private static final String COL_PASSWORD = "password";
-        private static final String COL_PHONE = "phone";
         private static final String COL_UPDATE_TIME = "updated";
     }
 

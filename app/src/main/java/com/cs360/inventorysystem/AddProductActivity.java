@@ -50,7 +50,6 @@ public class AddProductActivity extends AppCompatActivity {
         String name = mProductNameText.getText().toString();
         String number = mProductNumberText.getText().toString();
         String quantity = mProductQuantityText.getText().toString();
-        Long quantityLong = Long.parseLong(quantity);
 
         if (name.isEmpty()) {
             mMessage.setText(R.string.enter_product_name);
@@ -65,14 +64,12 @@ public class AddProductActivity extends AppCompatActivity {
             Toast.makeText(this, "Please enter the product quantity", Toast.LENGTH_SHORT).show();
         }
         else {
-
             // Send back the product ID
             Intent intent = new Intent(this, InventoryActivity.class);
             intent.putExtra(EXTRA_PRODUCT_NAME, name);
             intent.putExtra(EXTRA_PRODUCT_NUMBER, number);
-            intent.putExtra(EXTRA_PRODUCT_QUANTITY, quantityLong);
+            intent.putExtra(EXTRA_PRODUCT_QUANTITY, Long.parseLong(quantity));
             setResult(RESULT_OK, intent);
-            //startActivity(intent);
             finish();
         }
     }
