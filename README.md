@@ -1,4 +1,6 @@
 # InventorySystem
+
+# Overview
 This project is an inventory management solution developed for Android mobile devices which stores product information, allowing users to view all products in inventory via a Recycler View Grid Layout, to add and completely remove products from the inventory system, to update product quantities, and to receive SMS and in-app notifications when any product runs out of stock.  This app was the term project for my Mobile Architecture and Development course at Southern New Hampshire University.  
 
 # Requirements, Goals, and User Needs
